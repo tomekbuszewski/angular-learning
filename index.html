@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html ng-app="app">
+	<head>
+		<meta charset="utf-8">
+		<title>Learning Angular</title>
+		<base href="/">
+	</head>
+	<body>
+		<nav ng-controller="navCtrl">
+			<ul>
+				<li><a href="#" ng-click="loaded = false">Index</a></li>
+				<li><a href="#music/thedoors" ng-click="loaded = false">The Doors</a></li>
+				<li><a href="#music/radiohead" ng-click="loaded = false">Radiohead</a></li>
+			</ul>
+		</nav>
+		<div ng-view ng-show="loaded === true" style="padding: 100px; background: #ccc">
+
+		</div>
+		<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.0-rc.0/angular.min.js" charset="utf-8"></script>
+		<script src="https://code.angularjs.org/1.5.0-rc.0/angular-route.min.js" charset="utf-8"></script>
+		<script src="_js/all.js" charset="utf-8"></script>
+	</body>
+</html>
