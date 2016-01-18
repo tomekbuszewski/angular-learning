@@ -23,7 +23,7 @@ app.controller('artistCtrl', ($scope, $route, $routeParams, $http) => {
 	let dataSrc = './data',
 		artist = $routeParams.artist;
 
-	let data = dataSrc+'/'+artist+'.json';
+		let data = dataSrc+'/'+artist+'.json';
 
 	var renderArtist = function(data) {
 		$scope.msg = data.data[0].name+' from '+data.data[0].country;
