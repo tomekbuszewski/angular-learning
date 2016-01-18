@@ -25,15 +25,15 @@ app.controller('artistCtrl', ($scope, $route, $routeParams, $http) => {
 
 	let data = dataSrc+'/'+artist+'.json';
 
-	var success = function(data) {
+	var renderArtist = function(data) {
 		$scope.msg = data.data[0].name+' from '+data.data[0].country;
 		$scope.albums = data.data[0].albums;
 		$scope.loaded = true;
 	};
 
-	var fail = function() {
-		alert('fail');
+	var fail = function(err) {
+		console.log(err);
 	};
 
-	$http.get(data).then(success, fail);
+	$http.get(data).then(renderArtist, fail);
 });
