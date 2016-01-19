@@ -13,7 +13,7 @@ var gulp					= require('gulp'),
 // Sass task
 //——————————————————————————————————————————————————
 gulp.task('sass', function() {
-	return sass('_scss/**')
+	return sass('_sass/**')
 		.pipe(gulp.dest('_dev/_css'));
 });
 
@@ -22,8 +22,8 @@ gulp.task('sass', function() {
 gulp.task('css', ['sass'], function() {
 	return gulp.src('_dev/_css/**')
 		.pipe(prefix('last 2 version'))
-		.pipe(concatcss('main.css'))
-		.pipe(gulp.dest('_site/css'))
+		.pipe(concatcss('all.css'))
+		.pipe(gulp.dest('_css'))
 		.pipe(browserSync.stream());
 });
 

@@ -3,9 +3,11 @@
 	<head>
 		<meta charset="utf-8">
 		<title>Learning Angular</title>
+		<link rel="stylesheet" href="_css/all.css" media="screen" charset="utf-8">
 		<base href="/">
 	</head>
-	<body>
+	<body ng-controller="BodyCtrl">
+		<progress-bar></progress-bar>
 		<nav ng-controller="navCtrl">
 			<ul>
 				<li><a href="#" ng-click="loaded = false">Index</a></li>

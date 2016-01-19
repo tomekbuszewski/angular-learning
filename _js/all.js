@@ -15,7 +15,9 @@ app.config(function ($routeProvider) {
 	});
 });
 
-app.controller('navCtrl', function ($scope) {});
+app.controller('navCtrl', function ($scope) {
+	$scope.progress = 'no progress';
+});
 
 app.controller('artistCtrl', function ($scope, $route, $routeParams, $http) {
 	var dataSrc = './data',
@@ -27,6 +29,7 @@ app.controller('artistCtrl', function ($scope, $route, $routeParams, $http) {
 		$scope.msg = data.data[0].name + ' from ' + data.data[0].country;
 		$scope.albums = data.data[0].albums;
 		$scope.loaded = true;
+		$scope.progress = 'bam';
 	};
 
 	var fail = function fail(err) {
@@ -34,6 +37,18 @@ app.controller('artistCtrl', function ($scope, $route, $routeParams, $http) {
 	};
 
 	$http.get(data).then(renderArtist, fail);
+});
+
+app.directive('progressBar', function () {
+	return {
+		scope: {},
+		link: function link(scope, element) {
+			scope.$watch('progress', function () {
+				element.text(scope.progress);
+				console.log(scope.$parent);
+			});
+		}
+	};
 });
 
 },{}]},{},[1]);
