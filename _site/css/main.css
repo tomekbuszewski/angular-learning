@@ -1,0 +1,34 @@
+
+.progress-bar {
+  width: 100%;
+  height: 5px;
+  background: magenta;
+  position: absolute;
+  top: 0;
+  left: 0;
+  -webkit-transform: scaleX(0);
+  transform: scaleX(0);
+  opacity: 0;
+  -webkit-transform-origin: 0 0;
+  transform-origin: 0 0;
+  transition: opacity .25s;
+}
+
+.progress-bar.-loading {
+  opacity: 1;
+  transition: -webkit-transform 5s ease-out;
+  transition: transform 5s ease-out;
+  transition: transform 5s ease-out, -webkit-transform 5s ease-out;
+  -webkit-transform: scaleX(0.9);
+  transform: scaleX(0.9);
+  box-shadow: 0 0 10px 0 magenta;
+}
+
+.progress-bar.-loaded {
+  -webkit-transform: scaleX(1);
+  transform: scaleX(1);
+  opacity: 0;
+  transition: opacity .25s .5s linear, -webkit-transform .5s ease-in;
+  transition: transform .5s ease-in, opacity .25s .5s linear;
+  transition: transform .5s ease-in, opacity .25s .5s linear, -webkit-transform .5s ease-in;
+}

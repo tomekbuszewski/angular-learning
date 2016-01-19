@@ -17,7 +17,7 @@ var ArtistController = function () {
 
 		this.data = data;
 
-		$http.get(data).then(this.renderArtist, this.fail);
+		$http.get(data).then(this.renderArtist.bind(this), this.fail.bind(this));
 	}
 
 	_createClass(ArtistController, [{
