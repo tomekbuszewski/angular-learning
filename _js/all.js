@@ -7,23 +7,84 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 
 var app = angular.module('app', ['ngRoute']);
 
+// Progress bar
+//---------------------------------------------------
+
+var ProgressBarController = function () {
+	function ProgressBarController($scope, $element, $timeout) {
+		_classCallCheck(this, ProgressBarController);
+
+		this.scope = $scope;
+		this.element = $element;
+		this.timeout = $timeout;
+
+		this.element.addClass('progress-bar');
+	}
+
+	_createClass(ProgressBarController, [{
+		key: 'startProgress',
+		value: function startProgress() {
+			console.log('start');
+			this.element.addClass('-loading');
+		}
+	}, {
+		key: 'finishProgress',
+		value: function finishProgress() {
+			var _this = this;
+
+			console.log('fin');
+			this.element.addClass('-loaded');
+			this.timeout(function () {
+				_this.element.removeClass('-loaded -loading');
+			}, 750);
+		}
+	}]);
+
+	return ProgressBarController;
+}();
+
+ProgressBarController.$inject = ['$scope', '$element', '$timeout'];
+
+app.directive('progressBar', function () {
+	return {
+		restrict: 'E',
+		controller: ProgressBarController,
+		controllerAs: 'Progress'
+	};
+});
+
+// Artists
+//---------------------------------------------------
+
 var ArtistController = function () {
-	function ArtistController($route, $routeParams, $http) {
+	function ArtistController($scope, $route, $routeParams, $http) {
 		_classCallCheck(this, ArtistController);
 
 		var dataSrc = './data',
 		    artist = $routeParams.artist,
-		    data = dataSrc + '/' + artist + '.json';
+		    url = dataSrc + '/' + artist + '.json';
 
-		this.data = data;
+		this.scope = $scope;
+		this.route = $routeParams;
+		this.http = $http;
 
-		$http.get(data).then(this.renderArtist.bind(this), this.fail.bind(this));
+		this.fetchUrl(url);
 	}
 
 	_createClass(ArtistController, [{
+		key: 'fetchUrl',
+		value: function fetchUrl(url) {
+			var _this2 = this;
+
+			this.http.get(url).then(function (response) {
+				return _this2.renderArtist(response);
+			}, this.fail);
+		}
+	}, {
 		key: 'renderArtist',
-		value: function renderArtist() {
-			console.log(this.data);
+		value: function renderArtist(response) {
+			var result = angular.fromJson(response.data);
+			this.scope.msg = result;
 		}
 	}, {
 		key: 'fail',
@@ -35,7 +96,7 @@ var ArtistController = function () {
 	return ArtistController;
 }();
 
-ArtistController.$inject = ['$route', '$routeParams', '$http'];
+ArtistController.$inject = ['$scope', '$route', '$routeParams', '$http'];
 
 app.config(function ($routeProvider) {
 	$routeProvider.when('/', {
