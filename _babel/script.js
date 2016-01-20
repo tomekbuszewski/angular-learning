@@ -1,41 +1,5 @@
 const app = angular.module('app', ['ngRoute']);
 
-// Progress bar
-//---------------------------------------------------
-class ProgressBarController {
-	constructor($scope, $element, $timeout) {
-		this.scope = $scope;
-		this.element = $element;
-		this.timeout = $timeout;
-
-		this.element.addClass('progress-bar');
-	}
-
-	startProgress() {
-		console.log('start');
-		this.element.addClass('-loading');
-	}
-
-	finishProgress() {
-		console.log('fin');
-		this.element.addClass('-loaded');
-		this.timeout(() => {
-			this.element.removeClass('-loaded -loading');
-		}, 750);
-	}
-}
-
-ProgressBarController.$inject = ['$scope', '$element', '$timeout'];
-
-app.directive('progressBar', () => {
-	return {
-		restrict: 'E',
-		controller: ProgressBarController,
-		controllerAs: 'Progress'
-	};
-});
-
-
 // Artists
 //---------------------------------------------------
 class ArtistController {
@@ -56,8 +20,9 @@ class ArtistController {
 	}
 
 	renderArtist(response) {
-		const result = angular.fromJson(response.data);
-		this.scope.msg = result;
+		const result = response.data[0];
+		this.scope.msg = result.name;
+		this.scope.albums = result.albums;
 	}
 
 	fail(err) {
@@ -79,4 +44,23 @@ app.config(($routeProvider) => {
 		.otherwise({
 			template: '404'
 		});
+});
+
+class ScrollController {
+	report() {
+		console.log(window.scrollY);
+	}
+}
+
+app.directive('dummy', ($window) => {
+	return {
+		controller: ScrollController,
+		controllerAs: 'ctrl',
+    bindToController: true,
+		link: (scope, e, a, ctrl) => {
+			angular.element($window).on('scroll', () => {
+				ctrl.report();
+			});
+		}
+	};
 });
