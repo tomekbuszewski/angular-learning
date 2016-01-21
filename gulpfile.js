@@ -1,7 +1,6 @@
 var gulp					= require('gulp'),
 		bs						= require('browser-sync'),
 		browserSync 	= bs.create(),
-		reload				= bs.reload,
 		sass					= require('gulp-ruby-sass'),
 		prefix				= require('gulp-autoprefixer'),
 		concatjs			= require('gulp-concat'),
