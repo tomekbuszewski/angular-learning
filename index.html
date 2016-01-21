@@ -6,16 +6,15 @@
 		<base href="/">
 		<link rel="stylesheet" href="_css/main.css">
 	</head>
-	<body>
-		<progress-bar></progress-bar>
+	<body dummy>
 		<nav>
 			<ul>
-				<li><a href="#" ng-click="loaded = false">Index</a></li>
-				<li><a href="#music/thedoors" ng-click="loaded = false; Progress.startProgress();">The Doors</a></li>
-				<li><a href="#music/radiohead" ng-click="loaded = false; Progress.startProgress();">Radiohead</a></li>
+				<li><a href="#">Index</a></li>
+				<li><a href="#music/thedoors">The Doors</a></li>
+				<li><a href="#music/radiohead">Radiohead</a></li>
 			</ul>
 		</nav>
-		<div ng-view onload="loaded = true; Progress.finishProgress();" ng-show="loaded === true" style="padding: 100px; background: #ccc">
+		<div ng-view class="view">
 
 		</div>
 		<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.0-rc.0/angular.min.js" charset="utf-8"></script>

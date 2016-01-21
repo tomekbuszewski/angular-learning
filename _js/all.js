@@ -7,52 +7,6 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 
 var app = angular.module('app', ['ngRoute']);
 
-// Progress bar
-//---------------------------------------------------
-
-var ProgressBarController = function () {
-	function ProgressBarController($scope, $element, $timeout) {
-		_classCallCheck(this, ProgressBarController);
-
-		this.scope = $scope;
-		this.element = $element;
-		this.timeout = $timeout;
-
-		this.element.addClass('progress-bar');
-	}
-
-	_createClass(ProgressBarController, [{
-		key: 'startProgress',
-		value: function startProgress() {
-			console.log('start');
-			this.element.addClass('-loading');
-		}
-	}, {
-		key: 'finishProgress',
-		value: function finishProgress() {
-			var _this = this;
-
-			console.log('fin');
-			this.element.addClass('-loaded');
-			this.timeout(function () {
-				_this.element.removeClass('-loaded -loading');
-			}, 750);
-		}
-	}]);
-
-	return ProgressBarController;
-}();
-
-ProgressBarController.$inject = ['$scope', '$element', '$timeout'];
-
-app.directive('progressBar', function () {
-	return {
-		restrict: 'E',
-		controller: ProgressBarController,
-		controllerAs: 'Progress'
-	};
-});
-
 // Artists
 //---------------------------------------------------
 
@@ -74,17 +28,18 @@ var ArtistController = function () {
 	_createClass(ArtistController, [{
 		key: 'fetchUrl',
 		value: function fetchUrl(url) {
-			var _this2 = this;
+			var _this = this;
 
 			this.http.get(url).then(function (response) {
-				return _this2.renderArtist(response);
+				return _this.renderArtist(response);
 			}, this.fail);
 		}
 	}, {
 		key: 'renderArtist',
 		value: function renderArtist(response) {
-			var result = angular.fromJson(response.data);
-			this.scope.msg = result;
+			var result = response.data[0];
+			this.scope.msg = result.name;
+			this.scope.albums = result.albums;
 		}
 	}, {
 		key: 'fail',
@@ -107,6 +62,34 @@ app.config(function ($routeProvider) {
 	}).otherwise({
 		template: '404'
 	});
+});
+
+var ScrollController = function () {
+	function ScrollController() {
+		_classCallCheck(this, ScrollController);
+	}
+
+	_createClass(ScrollController, [{
+		key: 'report',
+		value: function report() {
+			console.log(window.scrollY);
+		}
+	}]);
+
+	return ScrollController;
+}();
+
+app.directive('dummy', function ($window) {
+	return {
+		controller: ScrollController,
+		controllerAs: 'ctrl',
+		bindToController: true,
+		link: function link(scope, e, a, ctrl) {
+			angular.element($window).on('scroll', function () {
+				ctrl.report();
+			});
+		}
+	};
 });
 
 },{}]},{},[1]);
