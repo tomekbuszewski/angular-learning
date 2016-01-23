@@ -32,3 +32,8 @@
   transition: transform .5s ease-in, opacity .25s .5s linear;
   transition: transform .5s ease-in, opacity .25s .5s linear, -webkit-transform .5s ease-in;
 }
+
+page {
+  height: 100vh;
+  display: block;
+}

@@ -1,6 +1,8 @@
 const app = angular.module('app', []);
 
-class Loader {
+// Loader class
+//——————————————————————————————————————————————————
+class LoaderService {
 	constructor() {
 		this.loaderID = 'progress-bar';
 		this.loader = document.getElementById(this.loaderID);
@@ -22,46 +24,44 @@ class Loader {
 	}
 }
 
-app.service('loader', Loader);
+app.service('loader', LoaderService);
 
-class ShadowController {
-	constructor($loader) {
-		// this.setColour = setColour;
-		this.loader = $loader;
+// Scroll class
+//——————————————————————————————————————————————————
+class ScrollService {
+	constructor() {
+		this.scrollTop = () => { return window.pageYOffset; }
 	}
 
-	setColour(colour) {
-		this.colour = colour;
-		this.loader.startLoading();
+	checkVisibility(el) {
+		const element = document.querySelector(el);
+		const fromTop = element.getBoundingClientRect().top;
+
+		if(fromTop > 0) {
+			return false;
+		} else {
+			return true;
+		}
 	}
 }
 
-ShadowController.$inject = ['loader'];
+app.service('scroll', ScrollService);
 
-app.component('shadow', {
-	bindings: {
-		colour: '@'
-	},
-	controller: ShadowController,
-	template: ['<div ',
-		'style="background: {{ $ctrl.colour }}; width: 100px; height: 100px;">',
-		'<button ng-click="$ctrl.setColour(\'red\');">Button</button>',
-		'<button ng-click="noise.music()">Noise</button>',
-	'</div>'].join('')
+// Page component
+//——————————————————————————————————————————————————
+class PageController {
+	constructor($scroll, $element, $attrs) {
+
+		window.addEventListener('scroll', () => {
+			let visible = $scroll.checkVisibility('#'+$attrs.id);
+			if(visible === true) { console.log($attrs.title); }
+		});
+	}
+}
+
+
+app.component('page', {
+	controller: PageController
 });
 
-app.component('noise', {
-	bindings: {
-		name: '='
-	},
-	controllerAs: 'noise',
-	controller: function() {
-		this.name = 'Noise';
-		this.music = music;
-
-		function music() {
-			alert('Merzbow');
-		}
-	},
-	template: ['<div>{{ noise.name }}</div>'].join('')
-});
+PageController.$inject = ['scroll', '$element', '$attrs'];

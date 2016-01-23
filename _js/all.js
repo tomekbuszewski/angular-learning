@@ -7,9 +7,12 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 
 var app = angular.module('app', []);
 
-var Loader = function () {
-	function Loader() {
-		_classCallCheck(this, Loader);
+// Loader class
+//——————————————————————————————————————————————————
+
+var LoaderService = function () {
+	function LoaderService() {
+		_classCallCheck(this, LoaderService);
 
 		this.loaderID = 'progress-bar';
 		this.loader = document.getElementById(this.loaderID);
@@ -20,7 +23,7 @@ var Loader = function () {
 		this.createLoader();
 	}
 
-	_createClass(Loader, [{
+	_createClass(LoaderService, [{
 		key: 'createLoader',
 		value: function createLoader() {
 			var body = document.getElementsByTagName('body')[0];
@@ -34,54 +37,60 @@ var Loader = function () {
 		}
 	}]);
 
-	return Loader;
+	return LoaderService;
 }();
 
-app.service('loader', Loader);
+app.service('loader', LoaderService);
 
-var ShadowController = function () {
-	function ShadowController($loader) {
-		_classCallCheck(this, ShadowController);
+// Scroll class
+//——————————————————————————————————————————————————
 
-		// this.setColour = setColour;
-		this.loader = $loader;
+var ScrollService = function () {
+	function ScrollService() {
+		_classCallCheck(this, ScrollService);
+
+		this.scrollTop = function () {
+			return window.pageYOffset;
+		};
 	}
 
-	_createClass(ShadowController, [{
-		key: 'setColour',
-		value: function setColour(colour) {
-			this.colour = colour;
-			this.loader.startLoading();
+	_createClass(ScrollService, [{
+		key: 'checkVisibility',
+		value: function checkVisibility(el) {
+			var element = document.querySelector(el);
+			var fromTop = element.getBoundingClientRect().top;
+
+			if (fromTop > 0) {
+				return false;
+			} else {
+				return true;
+			}
 		}
 	}]);
 
-	return ShadowController;
+	return ScrollService;
 }();
 
-ShadowController.$inject = ['loader'];
+app.service('scroll', ScrollService);
 
-app.component('shadow', {
-	bindings: {
-		colour: '@'
-	},
-	controller: ShadowController,
-	template: ['<div ', 'style="background: {{ $ctrl.colour }}; width: 100px; height: 100px;">', '<button ng-click="$ctrl.setColour(\'red\');">Button</button>', '<button ng-click="noise.music()">Noise</button>', '</div>'].join('')
-});
+// Page component
+//——————————————————————————————————————————————————
 
-app.component('noise', {
-	bindings: {
-		name: '='
-	},
-	controllerAs: 'noise',
-	controller: function controller() {
-		this.name = 'Noise';
-		this.music = music;
+var PageController = function PageController($scroll, $element, $attrs) {
+	_classCallCheck(this, PageController);
 
-		function music() {
-			alert('Merzbow');
+	window.addEventListener('scroll', function () {
+		var visible = $scroll.checkVisibility('#' + $attrs.id);
+		if (visible === true) {
+			console.log($attrs.title);
 		}
-	},
-	template: ['<div>{{ noise.name }}</div>'].join('')
+	});
+};
+
+app.component('page', {
+	controller: PageController
 });
+
+PageController.$inject = ['scroll', '$element', '$attrs'];
 
 },{}]},{},[1]);
