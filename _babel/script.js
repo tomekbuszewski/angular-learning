@@ -1,5 +1,23 @@
 const app = angular.module('app', []);
 
+// Helper class
+//——————————————————————————————————————————————————
+class HelpersService {
+	constructor() {
+		this.title = { text: '' };
+	}
+
+	setTitle(title) {
+		this.title.text = title;
+	}
+
+	getTitle() {
+		return this.title;
+	}
+}
+
+app.service('helpers', HelpersService);
+
 // Loader class
 //——————————————————————————————————————————————————
 class LoaderService {
@@ -30,7 +48,7 @@ app.service('loader', LoaderService);
 //——————————————————————————————————————————————————
 class ScrollService {
 	constructor() {
-		this.scrollTop = () => { return window.pageYOffset; }
+		this.scrollTop = () => { return window.pageYOffset; };
 	}
 
 	checkVisibility(el) {
@@ -43,6 +61,10 @@ class ScrollService {
 			return true;
 		}
 	}
+
+	getDirection() {
+
+	}
 }
 
 app.service('scroll', ScrollService);
@@ -50,11 +72,15 @@ app.service('scroll', ScrollService);
 // Page component
 //——————————————————————————————————————————————————
 class PageController {
-	constructor($scroll, $element, $attrs) {
+	constructor($scroll, $helpers, $element, $attrs) {
 
 		window.addEventListener('scroll', () => {
 			let visible = $scroll.checkVisibility('#'+$attrs.id);
-			if(visible === true) { console.log($attrs.title); }
+			let title = $attrs.title;
+
+			if(visible === true) {
+				$helpers.setTitle(title);
+			}
 		});
 	}
 }
@@ -64,4 +90,19 @@ app.component('page', {
 	controller: PageController
 });
 
-PageController.$inject = ['scroll', '$element', '$attrs'];
+PageController.$inject = ['scroll', 'helpers', '$element', '$attrs'];
+
+// Header component
+//——————————————————————————————————————————————————
+class HeaderController {
+	constructor($helpers) {
+		this.title = { text : $helpers.getTitle().text };
+	}
+}
+
+app.component('header', {
+	controller: HeaderController,
+	template: '<h1>{{ $ctrl.title.text }}</h1>'
+});
+
+HeaderController.$inject = ['helpers'];

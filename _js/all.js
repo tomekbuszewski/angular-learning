@@ -7,6 +7,33 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 
 var app = angular.module('app', []);
 
+// Helper class
+//——————————————————————————————————————————————————
+
+var HelpersService = function () {
+	function HelpersService() {
+		_classCallCheck(this, HelpersService);
+
+		this.title = { text: '' };
+	}
+
+	_createClass(HelpersService, [{
+		key: 'setTitle',
+		value: function setTitle(title) {
+			this.title.text = title;
+		}
+	}, {
+		key: 'getTitle',
+		value: function getTitle() {
+			return this.title;
+		}
+	}]);
+
+	return HelpersService;
+}();
+
+app.service('helpers', HelpersService);
+
 // Loader class
 //——————————————————————————————————————————————————
 
@@ -66,6 +93,9 @@ var ScrollService = function () {
 				return true;
 			}
 		}
+	}, {
+		key: 'getDirection',
+		value: function getDirection() {}
 	}]);
 
 	return ScrollService;
@@ -76,13 +106,15 @@ app.service('scroll', ScrollService);
 // Page component
 //——————————————————————————————————————————————————
 
-var PageController = function PageController($scroll, $element, $attrs) {
+var PageController = function PageController($scroll, $helpers, $element, $attrs) {
 	_classCallCheck(this, PageController);
 
 	window.addEventListener('scroll', function () {
 		var visible = $scroll.checkVisibility('#' + $attrs.id);
+		var title = $attrs.title;
+
 		if (visible === true) {
-			console.log($attrs.title);
+			$helpers.setTitle(title);
 		}
 	});
 };
@@ -91,6 +123,22 @@ app.component('page', {
 	controller: PageController
 });
 
-PageController.$inject = ['scroll', '$element', '$attrs'];
+PageController.$inject = ['scroll', 'helpers', '$element', '$attrs'];
+
+// Header component
+//——————————————————————————————————————————————————
+
+var HeaderController = function HeaderController($helpers) {
+	_classCallCheck(this, HeaderController);
+
+	this.title = { text: $helpers.getTitle().text };
+};
+
+app.component('header', {
+	controller: HeaderController,
+	template: '<h1>{{ $ctrl.title.text }}</h1>'
+});
+
+HeaderController.$inject = ['helpers'];
 
 },{}]},{},[1]);
