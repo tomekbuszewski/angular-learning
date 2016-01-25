@@ -6,7 +6,7 @@ class HelpersService {
 	constructor() {
 		// Title
 		//——————————————————————————————————————————————————
-		this.title = '';
+		this._title = '';
 
 		// Loader
 		//——————————————————————————————————————————————————
@@ -21,12 +21,13 @@ class HelpersService {
 
 	// Title
 	//——————————————————————————————————————————————————
-	setTitle(title) {
-		this.title = title;
+	set title(title) {
+		this._title = title;
 	}
 
-	getTitle() {
-		return this.title;
+	get title() {
+		console.log(this._title);
+		return this._title;
 	}
 
 	// Scroll
@@ -65,12 +66,14 @@ app.service('helpers', HelpersService);
 //——————————————————————————————————————————————————
 class PageController {
 	constructor($helpers, $element, $attrs) {
+		this.$scope = $scope;
+
 		window.addEventListener('scroll', () => {
 			let visible = $helpers.checkVisibility('#'+$attrs.id);
 			let title = $attrs.title;
 
 			if(visible === true) {
-				$helpers.setTitle(title);
+				$helpers.title = title;
 			}
 		});
 	}
@@ -88,15 +91,14 @@ PageController.$inject = ['helpers', '$element', '$attrs'];
 class HeaderController {
 	constructor($helpers) {
 		this.helpers = $helpers;
-		this.title = $helpers.getTitle();
+		this.title = $helpers.title;
 
 		this.getTitle();
 	}
 
 	getTitle() {
 		window.addEventListener('scroll', () => {
-			this.helpers.getTitle();
-			this.title = this.helpers.getTitle();
+			this.title = this.helpers.title;
 		});
 	}
 }

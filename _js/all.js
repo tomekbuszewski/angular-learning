@@ -16,7 +16,7 @@ var HelpersService = function () {
 
 		// Title
 		//——————————————————————————————————————————————————
-		this.title = '';
+		this._title = '';
 
 		// Loader
 		//——————————————————————————————————————————————————
@@ -33,21 +33,10 @@ var HelpersService = function () {
 	//——————————————————————————————————————————————————
 
 	_createClass(HelpersService, [{
-		key: 'setTitle',
-		value: function setTitle(title) {
-			this.title = title;
-		}
-	}, {
-		key: 'getTitle',
-		value: function getTitle() {
-			return this.title;
-		}
+		key: 'getScroll',
 
 		// Scroll
 		//——————————————————————————————————————————————————
-
-	}, {
-		key: 'getScroll',
 		value: function getScroll() {
 			return window.pageYOffset;
 		}
@@ -79,6 +68,15 @@ var HelpersService = function () {
 		value: function startLoading() {
 			this.loader.className += ' ' + this.loadingClass;
 		}
+	}, {
+		key: 'title',
+		set: function set(title) {
+			this._title = title;
+		},
+		get: function get() {
+			console.log(this._title);
+			return this._title;
+		}
 	}]);
 
 	return HelpersService;
@@ -92,12 +90,14 @@ app.service('helpers', HelpersService);
 var PageController = function PageController($helpers, $element, $attrs) {
 	_classCallCheck(this, PageController);
 
+	this.$scope = $scope;
+
 	window.addEventListener('scroll', function () {
 		var visible = $helpers.checkVisibility('#' + $attrs.id);
 		var title = $attrs.title;
 
 		if (visible === true) {
-			$helpers.setTitle(title);
+			$helpers.title = title;
 		}
 	});
 };
@@ -116,7 +116,7 @@ var HeaderController = function () {
 		_classCallCheck(this, HeaderController);
 
 		this.helpers = $helpers;
-		this.title = $helpers.getTitle();
+		this.title = $helpers.title;
 
 		this.getTitle();
 	}
@@ -127,8 +127,7 @@ var HeaderController = function () {
 			var _this = this;
 
 			window.addEventListener('scroll', function () {
-				_this.helpers.getTitle();
-				_this.title = _this.helpers.getTitle();
+				_this.title = _this.helpers.title;
 			});
 		}
 	}]);
