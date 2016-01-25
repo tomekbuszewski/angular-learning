@@ -86,11 +86,11 @@ PageController.$inject = ['helpers', '$element', '$attrs'];
 // Header component
 //——————————————————————————————————————————————————
 class HeaderController {
-	constructor($helpers, $element) {
-		this.title = { text : $helpers.getTitle().text };
+	constructor($helpers) {
 		this.helpers = $helpers;
+		this.title = $helpers.getTitle();
 
-		this.element = $element;
+		this.getTitle();
 	}
 
 	getTitle() {
@@ -103,7 +103,7 @@ class HeaderController {
 
 app.component('header', {
 	controller: HeaderController,
-	template: '<h1>{{ $ctrl.getTitle() }}</h1>'
+	template: '<h1>{{ $ctrl.title; }}</h1>'
 });
 
-HeaderController.$inject = ['helpers', '$element'];
+HeaderController.$inject = ['helpers'];

@@ -112,13 +112,13 @@ PageController.$inject = ['helpers', '$element', '$attrs'];
 //——————————————————————————————————————————————————
 
 var HeaderController = function () {
-	function HeaderController($helpers, $element) {
+	function HeaderController($helpers) {
 		_classCallCheck(this, HeaderController);
 
-		this.title = { text: $helpers.getTitle().text };
 		this.helpers = $helpers;
+		this.title = $helpers.getTitle();
 
-		this.element = $element;
+		this.getTitle();
 	}
 
 	_createClass(HeaderController, [{
@@ -138,9 +138,9 @@ var HeaderController = function () {
 
 app.component('header', {
 	controller: HeaderController,
-	template: '<h1>{{ $ctrl.getTitle() }}</h1>'
+	template: '<h1>{{ $ctrl.title; }}</h1>'
 });
 
-HeaderController.$inject = ['helpers', '$element'];
+HeaderController.$inject = ['helpers'];
 
 },{}]},{},[1]);
