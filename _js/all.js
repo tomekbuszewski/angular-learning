@@ -14,33 +14,12 @@ var HelpersService = function () {
 	function HelpersService() {
 		_classCallCheck(this, HelpersService);
 
-		this.title = { text: '' };
-	}
+		// Title
+		//——————————————————————————————————————————————————
+		this.title = '';
 
-	_createClass(HelpersService, [{
-		key: 'setTitle',
-		value: function setTitle(title) {
-			this.title.text = title;
-		}
-	}, {
-		key: 'getTitle',
-		value: function getTitle() {
-			return this.title;
-		}
-	}]);
-
-	return HelpersService;
-}();
-
-app.service('helpers', HelpersService);
-
-// Loader class
-//——————————————————————————————————————————————————
-
-var LoaderService = function () {
-	function LoaderService() {
-		_classCallCheck(this, LoaderService);
-
+		// Loader
+		//——————————————————————————————————————————————————
 		this.loaderID = 'progress-bar';
 		this.loader = document.getElementById(this.loaderID);
 
@@ -50,7 +29,45 @@ var LoaderService = function () {
 		this.createLoader();
 	}
 
-	_createClass(LoaderService, [{
+	// Title
+	//——————————————————————————————————————————————————
+
+	_createClass(HelpersService, [{
+		key: 'setTitle',
+		value: function setTitle(title) {
+			this.title = title;
+		}
+	}, {
+		key: 'getTitle',
+		value: function getTitle() {
+			return this.title;
+		}
+
+		// Scroll
+		//——————————————————————————————————————————————————
+
+	}, {
+		key: 'getScroll',
+		value: function getScroll() {
+			return window.pageYOffset;
+		}
+	}, {
+		key: 'checkVisibility',
+		value: function checkVisibility(el) {
+			var element = document.querySelector(el);
+			var fromTop = element.getBoundingClientRect().top;
+
+			if (fromTop > 0) {
+				return false;
+			} else {
+				return true;
+			}
+		}
+
+		// Loader
+		//——————————————————————————————————————————————————
+
+	}, {
 		key: 'createLoader',
 		value: function createLoader() {
 			var body = document.getElementsByTagName('body')[0];
@@ -64,53 +81,19 @@ var LoaderService = function () {
 		}
 	}]);
 
-	return LoaderService;
+	return HelpersService;
 }();
 
-app.service('loader', LoaderService);
-
-// Scroll class
-//——————————————————————————————————————————————————
-
-var ScrollService = function () {
-	function ScrollService() {
-		_classCallCheck(this, ScrollService);
-
-		this.scrollTop = function () {
-			return window.pageYOffset;
-		};
-	}
-
-	_createClass(ScrollService, [{
-		key: 'checkVisibility',
-		value: function checkVisibility(el) {
-			var element = document.querySelector(el);
-			var fromTop = element.getBoundingClientRect().top;
-
-			if (fromTop > 0) {
-				return false;
-			} else {
-				return true;
-			}
-		}
-	}, {
-		key: 'getDirection',
-		value: function getDirection() {}
-	}]);
-
-	return ScrollService;
-}();
-
-app.service('scroll', ScrollService);
+app.service('helpers', HelpersService);
 
 // Page component
 //——————————————————————————————————————————————————
 
-var PageController = function PageController($scroll, $helpers, $element, $attrs) {
+var PageController = function PageController($helpers, $element, $attrs) {
 	_classCallCheck(this, PageController);
 
 	window.addEventListener('scroll', function () {
-		var visible = $scroll.checkVisibility('#' + $attrs.id);
+		var visible = $helpers.checkVisibility('#' + $attrs.id);
 		var title = $attrs.title;
 
 		if (visible === true) {
@@ -123,22 +106,41 @@ app.component('page', {
 	controller: PageController
 });
 
-PageController.$inject = ['scroll', 'helpers', '$element', '$attrs'];
+PageController.$inject = ['helpers', '$element', '$attrs'];
 
 // Header component
 //——————————————————————————————————————————————————
 
-var HeaderController = function HeaderController($helpers) {
-	_classCallCheck(this, HeaderController);
+var HeaderController = function () {
+	function HeaderController($helpers, $element) {
+		_classCallCheck(this, HeaderController);
 
-	this.title = { text: $helpers.getTitle().text };
-};
+		this.title = { text: $helpers.getTitle().text };
+		this.helpers = $helpers;
+
+		this.element = $element;
+	}
+
+	_createClass(HeaderController, [{
+		key: 'getTitle',
+		value: function getTitle() {
+			var _this = this;
+
+			window.addEventListener('scroll', function () {
+				_this.helpers.getTitle();
+				_this.title = _this.helpers.getTitle();
+			});
+		}
+	}]);
+
+	return HeaderController;
+}();
 
 app.component('header', {
 	controller: HeaderController,
-	template: '<h1>{{ $ctrl.title.text }}</h1>'
+	template: '<h1>{{ $ctrl.getTitle() }}</h1>'
 });
 
-HeaderController.$inject = ['helpers'];
+HeaderController.$inject = ['helpers', '$element'];
 
 },{}]},{},[1]);

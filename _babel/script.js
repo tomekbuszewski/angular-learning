@@ -4,24 +4,12 @@ const app = angular.module('app', []);
 //——————————————————————————————————————————————————
 class HelpersService {
 	constructor() {
-		this.title = { text: '' };
-	}
+		// Title
+		//——————————————————————————————————————————————————
+		this.title = '';
 
-	setTitle(title) {
-		this.title.text = title;
-	}
-
-	getTitle() {
-		return this.title;
-	}
-}
-
-app.service('helpers', HelpersService);
-
-// Loader class
-//——————————————————————————————————————————————————
-class LoaderService {
-	constructor() {
+		// Loader
+		//——————————————————————————————————————————————————
 		this.loaderID = 'progress-bar';
 		this.loader = document.getElementById(this.loaderID);
 
@@ -31,24 +19,20 @@ class LoaderService {
 		this.createLoader();
 	}
 
-	createLoader() {
-		const body = document.getElementsByTagName('body')[0];
-		body.insertAdjacentHTML('beforeend', `<div id="${this.loaderID}" class="${this.loaderID}"></div>`);
-		this.loader = document.getElementById(this.loaderID);
+	// Title
+	//——————————————————————————————————————————————————
+	setTitle(title) {
+		this.title = title;
 	}
 
-	startLoading() {
-		this.loader.className += ` ${this.loadingClass}`;
+	getTitle() {
+		return this.title;
 	}
-}
 
-app.service('loader', LoaderService);
-
-// Scroll class
-//——————————————————————————————————————————————————
-class ScrollService {
-	constructor() {
-		this.scrollTop = () => { return window.pageYOffset; };
+	// Scroll
+	//——————————————————————————————————————————————————
+	getScroll() {
+		return window.pageYOffset;
 	}
 
 	checkVisibility(el) {
@@ -62,20 +46,27 @@ class ScrollService {
 		}
 	}
 
-	getDirection() {
+	// Loader
+	//——————————————————————————————————————————————————
+	createLoader() {
+		const body = document.getElementsByTagName('body')[0];
+		body.insertAdjacentHTML('beforeend', `<div id="${this.loaderID}" class="${this.loaderID}"></div>`);
+		this.loader = document.getElementById(this.loaderID);
+	}
 
+	startLoading() {
+		this.loader.className += ` ${this.loadingClass}`;
 	}
 }
 
-app.service('scroll', ScrollService);
+app.service('helpers', HelpersService);
 
 // Page component
 //——————————————————————————————————————————————————
 class PageController {
-	constructor($scroll, $helpers, $element, $attrs) {
-
+	constructor($helpers, $element, $attrs) {
 		window.addEventListener('scroll', () => {
-			let visible = $scroll.checkVisibility('#'+$attrs.id);
+			let visible = $helpers.checkVisibility('#'+$attrs.id);
 			let title = $attrs.title;
 
 			if(visible === true) {
@@ -90,19 +81,29 @@ app.component('page', {
 	controller: PageController
 });
 
-PageController.$inject = ['scroll', 'helpers', '$element', '$attrs'];
+PageController.$inject = ['helpers', '$element', '$attrs'];
 
 // Header component
 //——————————————————————————————————————————————————
 class HeaderController {
-	constructor($helpers) {
+	constructor($helpers, $element) {
 		this.title = { text : $helpers.getTitle().text };
+		this.helpers = $helpers;
+
+		this.element = $element;
+	}
+
+	getTitle() {
+		window.addEventListener('scroll', () => {
+			this.helpers.getTitle();
+			this.title = this.helpers.getTitle();
+		});
 	}
 }
 
 app.component('header', {
 	controller: HeaderController,
-	template: '<h1>{{ $ctrl.title.text }}</h1>'
+	template: '<h1>{{ $ctrl.getTitle() }}</h1>'
 });
 
-HeaderController.$inject = ['helpers'];
+HeaderController.$inject = ['helpers', '$element'];
