@@ -90,8 +90,6 @@ app.service('helpers', HelpersService);
 var PageController = function PageController($helpers, $element, $attrs) {
 	_classCallCheck(this, PageController);
 
-	this.$scope = $scope;
-
 	window.addEventListener('scroll', function () {
 		var visible = $helpers.checkVisibility('#' + $attrs.id);
 		var title = $attrs.title;

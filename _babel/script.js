@@ -66,7 +66,6 @@ app.service('helpers', HelpersService);
 //——————————————————————————————————————————————————
 class PageController {
 	constructor($helpers, $element, $attrs) {
-		this.$scope = $scope;
 
 		window.addEventListener('scroll', () => {
 			let visible = $helpers.checkVisibility('#'+$attrs.id);
