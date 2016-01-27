@@ -9,6 +9,9 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 
 var app = angular.module('app', []);
 
+// Page
+//——————————————————————————————————————————————————
+
 var Page = function () {
 	function Page($scope) {
 		var _this = this;
@@ -16,6 +19,8 @@ var Page = function () {
 		_classCallCheck(this, Page);
 
 		this.sections = new Set();
+		this.title;
+		this.id;
 
 		var cb = function cb() {
 			_this.setTitle();
@@ -54,6 +59,7 @@ var Page = function () {
 
 					if (s.isVisible()) {
 						this.title = s.title;
+						this.id = s.id;
 						return;
 					}
 				}
@@ -79,11 +85,17 @@ var Page = function () {
 
 Page.$inject = ['$scope'];
 
-app.component('page', {
-	controller: Page,
-	transclude: true,
-	template: '\n\t\t<header style="position: fixed; top: 0; left: 0; background: yellow; display: block; width: 100%; line-height: 30px;">{{ $ctrl.title }}</header>\n\t\t<div class="content" ng-transclude></div>\n\t'
+app.directive('page', function () {
+	return {
+		controller: Page,
+		controllerAs: '$ctrl',
+		transclude: true,
+		template: '\n\t\t\t<header class="page-header">{{ $ctrl.title }}</header>\n\t\t\t<div class="content" ng-transclude></div>\n\t\t'
+	};
 });
+
+// Page section
+//——————————————————————————————————————————————————
 
 var PageSection = function () {
 	function PageSection(el) {
@@ -135,13 +147,17 @@ app.directive('pageSection', function () {
 	};
 });
 
+// Page navigation
+//——————————————————————————————————————————————————
+
 var PageNavigationController = function () {
 	function PageNavigationController() {
 		_classCallCheck(this, PageNavigationController);
 
 		this.links = new Map();
+		this.active;
 
-		this.map = Array.from(this.links);
+		this.map;
 	}
 
 	_createClass(PageNavigationController, [{
@@ -184,12 +200,14 @@ var PageNavigationController = function () {
 	return PageNavigationController;
 }();
 
+PageNavigationController.$inject = ['$scope'];
+
 app.directive('pageNavigation', function () {
 	return {
 		controller: PageNavigationController,
 		controllerAs: '$ctrl',
 		require: ['pageNavigation', '^page'],
-		template: '\n\t\t\t<ul><li ng-repeat="link in $ctrl.map" page-scroll-to="{{link[1]}}">{{link[0]}}</li></ul>\n\t\t',
+		template: '\n\t\t\t<ul>\n\t\t\t\t<li ng-repeat="link in $ctrl.map" page-scroll-to="{{ link[1] }}">\n\t\t\t\t\t{{ link[0] }}\n\t\t\t\t</li>\n\t\t\t</ul>\n\t\t',
 		link: function link(scope, el, attrs, _ref3) {
 			var _ref4 = _slicedToArray(_ref3, 2);
 
@@ -203,6 +221,8 @@ app.directive('pageNavigation', function () {
 	};
 });
 
+// Page scrolling
+//——————————————————————————————————————————————————
 app.directive('pageScrollTo', function () {
 	return {
 		link: function link(scope, el, attrs) {
