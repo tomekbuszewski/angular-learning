@@ -82,7 +82,7 @@ Page.$inject = ['$scope'];
 app.component('page', {
 	controller: Page,
 	transclude: true,
-	template: '\n\t\t<header style="position: fixed; top: 0; left: 0; background: yellow">{{ $ctrl.title }}</header>\n\t\t<div class="content" ng-transclude></div>\n\t'
+	template: '\n\t\t<header style="position: fixed; top: 0; left: 0; background: yellow; display: block; width: 100%; line-height: 30px;">{{ $ctrl.title }}</header>\n\t\t<div class="content" ng-transclude></div>\n\t'
 });
 
 var PageSection = function () {
@@ -97,8 +97,7 @@ var PageSection = function () {
 		value: function isVisible() {
 			var fromTop = this.el[0].getBoundingClientRect().top;
 
-			console.log(this.title, fromTop);
-			if (fromTop >= 0 && fromTop < window.innerHeight) {
+			if (fromTop + window.innerHeight >= 0) {
 				return true;
 			} else {
 				return false;
@@ -116,7 +115,8 @@ app.directive('pageSection', function () {
 		controller: PageSection,
 		scope: true,
 		bindToController: {
-			title: '@'
+			title: '@',
+			id: '@'
 		},
 		controllerAs: '$ctrl',
 		require: ['pageSection', '^page'],
@@ -130,6 +130,89 @@ app.directive('pageSection', function () {
 
 			scope.$on('$destroy', function () {
 				page.unregister(ctrl);
+			});
+		}
+	};
+});
+
+var PageNavigationController = function () {
+	function PageNavigationController($element) {
+		_classCallCheck(this, PageNavigationController);
+
+		this.links = new Map();
+		this.el = $element;
+
+		this.map = Array.from(this.links);
+	}
+
+	_createClass(PageNavigationController, [{
+		key: 'getPosition',
+		value: function getPosition(el) {
+			return document.getElementById(el).offsetTop;
+		}
+	}, {
+		key: 'createMap',
+		value: function createMap(elems) {
+			var _iteratorNormalCompletion2 = true;
+			var _didIteratorError2 = false;
+			var _iteratorError2 = undefined;
+
+			try {
+				for (var _iterator2 = elems[Symbol.iterator](), _step2; !(_iteratorNormalCompletion2 = (_step2 = _iterator2.next()).done); _iteratorNormalCompletion2 = true) {
+					var section = _step2.value;
+
+					this.links.set(section.title, this.getPosition(section.id));
+				}
+			} catch (err) {
+				_didIteratorError2 = true;
+				_iteratorError2 = err;
+			} finally {
+				try {
+					if (!_iteratorNormalCompletion2 && _iterator2.return) {
+						_iterator2.return();
+					}
+				} finally {
+					if (_didIteratorError2) {
+						throw _iteratorError2;
+					}
+				}
+			}
+
+			this.map = Array.from(this.links);
+		}
+	}]);
+
+	return PageNavigationController;
+}();
+
+PageNavigationController.$inject = ['$element'];
+
+app.directive('pageNavigation', function () {
+	return {
+		controller: PageNavigationController,
+		controllerAs: '$ctrl',
+		require: ['pageNavigation', '^page'],
+		template: '\n\t\t\t<li ng-repeat="link in $ctrl.map" page-scroll-to="{{link[1]}}">{{link[0]}}</li>\n\t\t',
+		link: function link(scope, el, attrs, _ref3) {
+			var _ref4 = _slicedToArray(_ref3, 2);
+
+			var ctrl = _ref4[0];
+			var page = _ref4[1];
+
+			var sections = page.sections;
+
+			ctrl.createMap(sections);
+		}
+	};
+});
+
+app.directive('pageScrollTo', function () {
+	return {
+		link: function link(scope, el, attrs) {
+			var scroll = attrs.pageScrollTo;
+
+			el[0].addEventListener('click', function () {
+				window.scrollTo(0, scroll);
 			});
 		}
 	};
