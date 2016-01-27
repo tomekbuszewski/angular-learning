@@ -83,9 +83,8 @@ app.directive('pageSection', ()=> {
 });
 
 class PageNavigationController {
-	constructor($element) {
+	constructor() {
 		this.links = new Map();
-		this.el = $element;
 
 		this.map = Array.from(this.links);
 	}
@@ -103,15 +102,13 @@ class PageNavigationController {
 	}
 }
 
-PageNavigationController.$inject = ['$element'];
-
 app.directive('pageNavigation', () => {
 	return {
 		controller: PageNavigationController,
 		controllerAs: '$ctrl',
 		require: ['pageNavigation', '^page'],
 		template: `
-			<li ng-repeat="link in $ctrl.map" page-scroll-to="{{link[1]}}">{{link[0]}}</li>
+			<ul><li ng-repeat="link in $ctrl.map" page-scroll-to="{{link[1]}}">{{link[0]}}</li></ul>
 		`,
 		link(scope, el, attrs, [ctrl, page]) {
 			const sections = page.sections;
