@@ -53,7 +53,7 @@ class PageSection {
 	isVisible() {
 		const fromTop = this.el[0].getBoundingClientRect().top;
 
-		if((fromTop + window.innerHeight) >= 0) {
+		if((fromTop + window.innerHeight) >= 1) {
 			return true;
 		} else {
 			return false;
