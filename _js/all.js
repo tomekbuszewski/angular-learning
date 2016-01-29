@@ -22,14 +22,14 @@ var Page = function () {
 		this.title;
 		this.id;
 
-		var cb = function cb() {
+		var triggerTitle = function triggerTitle() {
 			_this.setTitle();
 			$scope.$apply();
 		};
 
-		window.addEventListener('scroll', cb);
+		window.addEventListener('scroll', triggerTitle);
 		$scope.$on('$destroy', function () {
-			return window.removeEventListener('scroll', cb);
+			return window.removeEventListener('scroll', triggerTitle);
 		});
 	}
 
@@ -55,11 +55,11 @@ var Page = function () {
 
 			try {
 				for (var _iterator = this.sections.values()[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
-					var s = _step.value;
+					var section = _step.value;
 
-					if (s.isVisible()) {
-						this.title = s.title;
-						this.id = s.id;
+					if (section.isVisible()) {
+						this.title = section.title;
+						this.id = section.id;
 						return;
 					}
 				}
@@ -189,7 +189,11 @@ var PageNavigationController = function () {
 			}
 
 			this.map = Array.from(this.links);
-			console.log(this.map);
+		}
+	}, {
+		key: 'getActive',
+		value: function getActive() {
+			return this.active;
 		}
 	}]);
 
@@ -211,6 +215,11 @@ app.directive('pageNavigation', function () {
 			var page = _ref4[1];
 
 			var sections = page.sections;
+
+			window.addEventListener('scroll', function () {
+				ctrl.active = page.id;
+				ctrl.getActive();
+			});
 
 			ctrl.createMap(sections);
 		}

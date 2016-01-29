@@ -12,6 +12,10 @@
   cursor: pointer;
 }
 
+.page-navigation li.-active {
+  font-weight: bold;
+}
+
 .page-header {
   position: fixed;
   top: 0;

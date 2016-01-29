@@ -8,13 +8,13 @@ class Page {
 		this.title;
 		this.id;
 
-		const cb = () => {
+		const triggerTitle = () => {
 			this.setTitle();
 			$scope.$apply();
 		};
 
-		window.addEventListener('scroll', cb);
-		$scope.$on('$destroy', () => window.removeEventListener('scroll', cb));
+		window.addEventListener('scroll', triggerTitle);
+		$scope.$on('$destroy', () => window.removeEventListener('scroll', triggerTitle));
 	}
 
 	register(section) {
@@ -29,10 +29,10 @@ class Page {
 
 	setTitle() {
 		this.title = '';
-		for(let s of this.sections.values()) {
-			if (s.isVisible()) {
-				this.title = s.title;
-				this.id = s.id;
+		for(let section of this.sections.values()) {
+			if (section.isVisible()) {
+				this.title = section.title;
+				this.id = section.id;
 				return;
 			}
 		}
@@ -109,7 +109,10 @@ class PageNavigationController {
 		}
 
 		this.map = Array.from(this.links);
-		console.log(this.map);
+	}
+
+	getActive() {
+		return this.active;
 	}
 }
 
@@ -123,6 +126,11 @@ app.directive('pageNavigation', () => {
 		templateUrl: '../_templates/pageNavigation.html',
 		link(scope, el, attrs, [ctrl, page]) {
 			const sections = page.sections;
+
+			window.addEventListener('scroll', () => {
+				ctrl.active = page.id;
+				ctrl.getActive();
+			});
 
 			ctrl.createMap(sections);
 		}
