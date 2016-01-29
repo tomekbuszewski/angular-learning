@@ -1,5 +1,5 @@
 <header class="page-header">{{ $ctrl.title }}</header>
-<nav class="page-navigation">
+<nav class="page-navigation" ng-if="$ctrl.withNavigation">
 	<ul>
 		<li
 			ng-repeat="link in $ctrl.map"

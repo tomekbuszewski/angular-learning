@@ -3,7 +3,7 @@ const app = angular.module('app', []);
 // Page
 //——————————————————————————————————————————————————
 class Page {
-	constructor($scope) {
+	constructor($scope, $attrs) {
 		this.sections = new Set();
 		this.title;
 		this.id;
@@ -18,6 +18,10 @@ class Page {
 
 		window.addEventListener('scroll', triggerTitle);
 		$scope.$on('$destroy', () => window.removeEventListener('scroll', triggerTitle));
+
+		if($attrs.hasOwnProperty('withNavigation')) {
+			this.withNavigation = true;
+		}
 	}
 
 	register(section) {
@@ -45,15 +49,17 @@ class Page {
 	}
 
 	generateNavigation() {
-		for(let section of this.sections) {
-			this.links.set(section.title, '#'+section.id);
-		}
+		if(this.withNavigation === true) {
+			for(let section of this.sections) {
+				this.links.set(section.title, '#'+section.id);
+			}
 
-		this.map = Array.from(this.links);
+			this.map = Array.from(this.links);
+		}
 	}
 }
 
-Page.$inject = ['$scope'];
+Page.$inject = ['$scope', '$attrs'];
 
 app.directive('page', () => {
 	return {
@@ -100,50 +106,6 @@ app.directive('pageSection', ()=> {
 			scope.$on('$destroy', ()=> {
 				page.unregister(ctrl);
 			});
-		}
-	};
-});
-
-// Page navigation
-//——————————————————————————————————————————————————
-class PageNavigationController {
-	constructor() {
-		this.links = new Map();
-		this.active;
-
-		this.map;
-	}
-
-	createMap(elems) {
-		for(let section of elems) {
-			this.links.set(section.title, '#'+section.id);
-		}
-
-		this.map = Array.from(this.links);
-	}
-
-	getActive() {
-		return this.active;
-	}
-}
-
-PageNavigationController.$inject = ['$scope'];
-
-app.directive('pageNavigation', () => {
-	return {
-		controller: PageNavigationController,
-		controllerAs: '$ctrl',
-		require: ['pageNavigation', '^page'],
-		templateUrl: '../_templates/pageNavigation.html',
-		link(scope, el, attrs, [ctrl, page]) {
-			const sections = page.sections;
-
-			window.addEventListener('scroll', () => {
-				ctrl.active = page.id;
-				ctrl.getActive();
-			});
-
-			ctrl.createMap(sections);
 		}
 	};
 });

@@ -13,7 +13,7 @@ var app = angular.module('app', []);
 //——————————————————————————————————————————————————
 
 var Page = function () {
-	function Page($scope) {
+	function Page($scope, $attrs) {
 		var _this = this;
 
 		_classCallCheck(this, Page);
@@ -34,6 +34,10 @@ var Page = function () {
 		$scope.$on('$destroy', function () {
 			return window.removeEventListener('scroll', triggerTitle);
 		});
+
+		if ($attrs.hasOwnProperty('withNavigation')) {
+			this.withNavigation = true;
+		}
 	}
 
 	_createClass(Page, [{
@@ -87,39 +91,41 @@ var Page = function () {
 	}, {
 		key: 'generateNavigation',
 		value: function generateNavigation() {
-			var _iteratorNormalCompletion2 = true;
-			var _didIteratorError2 = false;
-			var _iteratorError2 = undefined;
+			if (this.withNavigation === true) {
+				var _iteratorNormalCompletion2 = true;
+				var _didIteratorError2 = false;
+				var _iteratorError2 = undefined;
 
-			try {
-				for (var _iterator2 = this.sections[Symbol.iterator](), _step2; !(_iteratorNormalCompletion2 = (_step2 = _iterator2.next()).done); _iteratorNormalCompletion2 = true) {
-					var section = _step2.value;
-
-					this.links.set(section.title, '#' + section.id);
-				}
-			} catch (err) {
-				_didIteratorError2 = true;
-				_iteratorError2 = err;
-			} finally {
 				try {
-					if (!_iteratorNormalCompletion2 && _iterator2.return) {
-						_iterator2.return();
+					for (var _iterator2 = this.sections[Symbol.iterator](), _step2; !(_iteratorNormalCompletion2 = (_step2 = _iterator2.next()).done); _iteratorNormalCompletion2 = true) {
+						var section = _step2.value;
+
+						this.links.set(section.title, '#' + section.id);
 					}
+				} catch (err) {
+					_didIteratorError2 = true;
+					_iteratorError2 = err;
 				} finally {
-					if (_didIteratorError2) {
-						throw _iteratorError2;
+					try {
+						if (!_iteratorNormalCompletion2 && _iterator2.return) {
+							_iterator2.return();
+						}
+					} finally {
+						if (_didIteratorError2) {
+							throw _iteratorError2;
+						}
 					}
 				}
-			}
 
-			this.map = Array.from(this.links);
+				this.map = Array.from(this.links);
+			}
 		}
 	}]);
 
 	return Page;
 }();
 
-Page.$inject = ['$scope'];
+Page.$inject = ['$scope', '$attrs'];
 
 app.directive('page', function () {
 	return {
@@ -179,85 +185,6 @@ app.directive('pageSection', function () {
 			scope.$on('$destroy', function () {
 				page.unregister(ctrl);
 			});
-		}
-	};
-});
-
-// Page navigation
-//——————————————————————————————————————————————————
-
-var PageNavigationController = function () {
-	function PageNavigationController() {
-		_classCallCheck(this, PageNavigationController);
-
-		this.links = new Map();
-		this.active;
-
-		this.map;
-	}
-
-	_createClass(PageNavigationController, [{
-		key: 'createMap',
-		value: function createMap(elems) {
-			var _iteratorNormalCompletion3 = true;
-			var _didIteratorError3 = false;
-			var _iteratorError3 = undefined;
-
-			try {
-				for (var _iterator3 = elems[Symbol.iterator](), _step3; !(_iteratorNormalCompletion3 = (_step3 = _iterator3.next()).done); _iteratorNormalCompletion3 = true) {
-					var section = _step3.value;
-
-					this.links.set(section.title, '#' + section.id);
-				}
-			} catch (err) {
-				_didIteratorError3 = true;
-				_iteratorError3 = err;
-			} finally {
-				try {
-					if (!_iteratorNormalCompletion3 && _iterator3.return) {
-						_iterator3.return();
-					}
-				} finally {
-					if (_didIteratorError3) {
-						throw _iteratorError3;
-					}
-				}
-			}
-
-			this.map = Array.from(this.links);
-		}
-	}, {
-		key: 'getActive',
-		value: function getActive() {
-			return this.active;
-		}
-	}]);
-
-	return PageNavigationController;
-}();
-
-PageNavigationController.$inject = ['$scope'];
-
-app.directive('pageNavigation', function () {
-	return {
-		controller: PageNavigationController,
-		controllerAs: '$ctrl',
-		require: ['pageNavigation', '^page'],
-		templateUrl: '../_templates/pageNavigation.html',
-		link: function link(scope, el, attrs, _ref3) {
-			var _ref4 = _slicedToArray(_ref3, 2);
-
-			var ctrl = _ref4[0];
-			var page = _ref4[1];
-
-			var sections = page.sections;
-
-			window.addEventListener('scroll', function () {
-				ctrl.active = page.id;
-				ctrl.getActive();
-			});
-
-			ctrl.createMap(sections);
 		}
 	};
 });
