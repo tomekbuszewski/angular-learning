@@ -1,0 +1,12 @@
+<header class="page-header">{{ $ctrl.title }}</header>
+<nav class="page-navigation">
+	<ul>
+		<li
+			ng-repeat="link in $ctrl.map"
+			page-scroll-to="{{ link[1] }}"
+			ng-class="{ '-active' : '#'+$ctrl.id === '{{ link[1] }}' }">
+			{{ link[0] }}
+		</li>
+	</ul>
+</nav>
+<div class="content" ng-transclude></div>

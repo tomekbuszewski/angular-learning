@@ -8,6 +8,9 @@ class Page {
 		this.title;
 		this.id;
 
+		this.links = new Map();
+		this.map;
+
 		const triggerTitle = () => {
 			this.setTitle();
 			$scope.$apply();
@@ -20,15 +23,18 @@ class Page {
 	register(section) {
 		this.sections.add(section);
 		this.setTitle();
+		this.generateNavigation();
 	}
 
 	unregister(section) {
 		this.sections.delete(section);
 		this.setTitle();
+		this.generateNavigation();
 	}
 
 	setTitle() {
 		this.title = '';
+		this.id = '';
 		for(let section of this.sections.values()) {
 			if (section.isVisible()) {
 				this.title = section.title;
@@ -36,6 +42,14 @@ class Page {
 				return;
 			}
 		}
+	}
+
+	generateNavigation() {
+		for(let section of this.sections) {
+			this.links.set(section.title, '#'+section.id);
+		}
+
+		this.map = Array.from(this.links);
 	}
 }
 
@@ -46,10 +60,7 @@ app.directive('page', () => {
 		controller: Page,
 		controllerAs: '$ctrl',
 		transclude: true,
-		template: `
-			<header class="page-header">{{ $ctrl.title }}</header>
-			<div class="content" ng-transclude></div>
-		`
+		templateUrl: '_templates/page.html'
 	};
 });
 

@@ -1,5 +1,8 @@
 <ul>
-	<li ng-repeat="link in $ctrl.map" ng-class="{ '-active' : '#'+$ctrl.active === '{{ link[1] }}' }" active="{{ $ctrl.active }}" page-scroll-to="{{ link[1] }}">
+	<li ng-repeat="link in $ctrl.map"
+	ng-class="{ '-active' : '#'+$ctrl.active === '{{ link[1] }}' }"
+	active="{{ $ctrl.active }}"
+	page-scroll-to="{{ link[1] }}">
 		{{ link[0] }}
 	</li>
 </ul>
