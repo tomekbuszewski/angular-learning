@@ -161,11 +161,6 @@ var PageNavigationController = function () {
 	}
 
 	_createClass(PageNavigationController, [{
-		key: 'getPosition',
-		value: function getPosition(el) {
-			return document.getElementById(el).offsetTop;
-		}
-	}, {
 		key: 'createMap',
 		value: function createMap(elems) {
 			var _iteratorNormalCompletion2 = true;
@@ -176,7 +171,7 @@ var PageNavigationController = function () {
 				for (var _iterator2 = elems[Symbol.iterator](), _step2; !(_iteratorNormalCompletion2 = (_step2 = _iterator2.next()).done); _iteratorNormalCompletion2 = true) {
 					var section = _step2.value;
 
-					this.links.set(section.title, this.getPosition(section.id));
+					this.links.set(section.title, '#' + section.id);
 				}
 			} catch (err) {
 				_didIteratorError2 = true;
@@ -194,6 +189,7 @@ var PageNavigationController = function () {
 			}
 
 			this.map = Array.from(this.links);
+			console.log(this.map);
 		}
 	}]);
 
@@ -207,7 +203,7 @@ app.directive('pageNavigation', function () {
 		controller: PageNavigationController,
 		controllerAs: '$ctrl',
 		require: ['pageNavigation', '^page'],
-		template: '\n\t\t\t<ul>\n\t\t\t\t<li ng-repeat="link in $ctrl.map" page-scroll-to="{{ link[1] }}">\n\t\t\t\t\t{{ link[0] }}\n\t\t\t\t</li>\n\t\t\t</ul>\n\t\t',
+		templateUrl: '../_templates/pageNavigation.html',
 		link: function link(scope, el, attrs, _ref3) {
 			var _ref4 = _slicedToArray(_ref3, 2);
 
@@ -227,9 +223,10 @@ app.directive('pageScrollTo', function () {
 	return {
 		link: function link(scope, el, attrs) {
 			var scroll = attrs.pageScrollTo;
+			var scrollTarget = document.querySelector(scroll).offsetTop;
 
 			el[0].addEventListener('click', function () {
-				window.scrollTo(0, scroll);
+				window.scrollTo(0, scrollTarget);
 			});
 		}
 	};

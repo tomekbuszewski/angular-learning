@@ -103,16 +103,13 @@ class PageNavigationController {
 		this.map;
 	}
 
-	getPosition(el) {
-		return document.getElementById(el).offsetTop;
-	}
-
 	createMap(elems) {
 		for(let section of elems) {
-			this.links.set(section.title, this.getPosition(section.id));
+			this.links.set(section.title, '#'+section.id);
 		}
 
 		this.map = Array.from(this.links);
+		console.log(this.map);
 	}
 }
 
@@ -123,13 +120,7 @@ app.directive('pageNavigation', () => {
 		controller: PageNavigationController,
 		controllerAs: '$ctrl',
 		require: ['pageNavigation', '^page'],
-		template: `
-			<ul>
-				<li ng-repeat="link in $ctrl.map" page-scroll-to="{{ link[1] }}">
-					{{ link[0] }}
-				</li>
-			</ul>
-		`,
+		templateUrl: '../_templates/pageNavigation.html',
 		link(scope, el, attrs, [ctrl, page]) {
 			const sections = page.sections;
 
@@ -144,8 +135,9 @@ app.directive('pageScrollTo', () => {
 	return {
 		link(scope, el, attrs) {
 			const scroll = attrs.pageScrollTo;
+			const scrollTarget = document.querySelector(scroll).offsetTop;
 
-			el[0].addEventListener('click', () => { window.scrollTo(0, scroll); });
+			el[0].addEventListener('click', () => { window.scrollTo(0, scrollTarget); });
 		}
 	};
 });
